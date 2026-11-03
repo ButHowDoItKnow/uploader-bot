@@ -1,0 +1,31 @@
+name: tick
+on:
+  schedule:
+    - cron: "5,35 12-23 * * *"   # 07:05-18:35 EST (UTC-5); in EDT everything shifts 1 h later, windows are checked in NY time
+    - cron: "5,35 0-4 * * *"     # 19:05-23:35 EST
+  workflow_dispatch:
+    inputs:
+      dry_run: {description: "poll + decide only", type: boolean, default: false}
+concurrency: {group: uploader, cancel-in-progress: false}
+permissions: {contents: write, issues: write}
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - name: tokens
+        env: {YT: "${{ secrets.YT_TOKEN_JSON }}", IG: "${{ secrets.IG_TOKEN }}", IGX: "${{ secrets.IG_TOKEN_EXPIRES }}"}
+        run: |
+          d=~/.config/cyrex/tokens; mkdir -p $d; umask 077
+          printf '%s' "$YT" > $d/youtube_token.json; printf '%s\n' "$IG" > $d/instagram_token; printf '%s\n' "$IGX" > $d/instagram_token.expires
+      - name: tick
+        env: {GH_TOKEN: "${{ github.token }}", BOT_PAUSED: "${{ vars.BOT_PAUSED }}"}
+        run: python bot.py tick ${{ inputs.dry_run && '--dry-run' || '' }}
+      - name: save state
+        run: |
+          git config user.name uploader-bot; git config user.email bot@users.noreply.github.com
+          git add queue.json state/ && git commit -qm "tick $(date -u +%FT%H:%M)" && git push -q || echo "no state change"

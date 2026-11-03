@@ -1,0 +1,84 @@
+{
+ "items": [
+  {
+   "slug": "birthday",
+   "asset": "birthday.mp4",
+   "title": "23 Kids, 50% Chance Two Share a Birthday. How?",
+   "yt_description": "Me finding out my birthday twin sat behind me all year 🎂😳\n\nFollow me for more KNOW.\n#math #probability #birthdayparadox #animation #shorts",
+   "ig_caption": "Me finding out my birthday twin sat behind me all year 🎂😳\n\nFollow me for more KNOW.\n#math #probability #birthdayparadox #animation",
+   "tags": [
+    "birthday paradox",
+    "probability",
+    "math",
+    "pixel art",
+    "statistics"
+   ],
+   "thumb_offset_ms": 0,
+   "status": "queued"
+  },
+  {
+   "slug": "monty_hall",
+   "asset": "monty_hall.mp4",
+   "title": "Switch Doors and You Win Twice as Often. How?",
+   "yt_description": "The goat was never the problem. You were. 🐐🚗\n\nFollow me for more KNOW.\n#math #probability #montyhall #animation #shorts",
+   "ig_caption": "The goat was never the problem. You were. 🐐🚗\n\nFollow me for more KNOW.\n#math #probability #montyhall #animation",
+   "tags": [
+    "monty hall problem",
+    "probability",
+    "math",
+    "game show",
+    "pixel art"
+   ],
+   "thumb_offset_ms": 0,
+   "status": "queued"
+  },
+  {
+   "slug": "cereal_toys",
+   "asset": "cereal_toys.mp4",
+   "title": "6 Toys in the Cereal. Why Do You Need 15 Boxes?",
+   "yt_description": "Mom: we are NOT buying another box. Me, box 14 of 15: 🥣😭\n\nFollow me for more KNOW.\n#math #probability #cereal #animation #shorts",
+   "ig_caption": "Mom: we are NOT buying another box. Me, box 14 of 15: 🥣😭\n\nFollow me for more KNOW.\n#math #probability #cereal #animation",
+   "tags": [
+    "coupon collector problem",
+    "probability",
+    "math",
+    "cereal toys",
+    "pixel art"
+   ],
+   "thumb_offset_ms": 0,
+   "status": "queued"
+  },
+  {
+   "slug": "benford",
+   "asset": "benford.mp4",
+   "title": "He Faked 10,000 Invoices. The Number 1 Snitched.",
+   "yt_description": "Bro faked the numbers but forgot to fake the ONES 💀🧾\n\nFollow me for more KNOW.\n#math #benfordslaw #fraud #animation #shorts",
+   "ig_caption": "Bro faked the numbers but forgot to fake the ONES 💀🧾\n\nFollow me for more KNOW.\n#math #benfordslaw #fraud #animation",
+   "tags": [
+    "benford's law",
+    "fraud detection",
+    "math",
+    "statistics",
+    "pixel art"
+   ],
+   "thumb_offset_ms": 0,
+   "status": "queued"
+  },
+  {
+   "slug": "drunk_walk",
+   "asset": "drunk_walk.mp4",
+   "title": "A Drunk Man Gets Home. A Drunk Bird Might Not. Why?",
+   "yt_description": "Bro was 3 tiles from home and took the scenic route for 40 minutes 🍺🕊️\n\nFollow me for more KNOW.\n#math #randomwalk #probability #animation #shorts",
+   "ig_caption": "Bro was 3 tiles from home and took the scenic route for 40 minutes 🍺🕊️\n\nFollow me for more KNOW.\n#math #randomwalk #probability #animation",
+   "tags": [
+    "random walk",
+    "polya",
+    "probability",
+    "math",
+    "pixel art"
+   ],
+   "thumb_offset_ms": 0,
+   "status": "queued"
+  }
+ ]
+}
