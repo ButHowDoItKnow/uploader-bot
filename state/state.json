@@ -2,5 +2,15 @@
  "last_post_at": "2026-11-02T14:13:45+00:00",
  "posts": [
   "2026-11-02T14:13:45+00:00"
- ]
+ ],
+ "last_tick": {
+  "at": "2026-11-03T19:25:22+00:00",
+  "post": false,
+  "why": "outside posting window",
+  "window": false,
+  "gap_h": 29.2,
+  "today": 0,
+  "rate": null,
+  "peak": 0
+ }
 }
