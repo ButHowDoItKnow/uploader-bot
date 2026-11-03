@@ -281,7 +281,10 @@ def cmd_enqueue(a):
         gh("release", "view", "queue", "--repo", REPO)
     except subprocess.CalledProcessError:
         gh("release", "create", "queue", "--repo", REPO, "--title", "queue", "--notes", "Videos waiting to be posted.")
-    gh("release", "upload", "queue", "--repo", REPO, "--clobber", f"{a.video}#{a.slug}.mp4")
+    import shutil, tempfile                      # the asset name comes from the file name (#label only sets a label)
+    tmp = Path(tempfile.mkdtemp()) / f"{a.slug}.mp4"
+    shutil.copy(a.video, tmp)
+    gh("release", "upload", "queue", "--repo", REPO, "--clobber", str(tmp))
     print(f"uploaded as {a.slug}.mp4 — add an item with \"asset\": \"{a.slug}.mp4\" to queue.json")
 
 
