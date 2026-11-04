@@ -31,6 +31,8 @@ QUEUE, STATE, POLLS = ROOT / "queue.json", ROOT / "state/state.json", ROOT / "st
 NY = ZoneInfo("America/New_York")
 WINDOWS = [((7, 0), (10, 0)), ((11, 30), (13, 30)), ((15, 0), (24, 0))]
 DROP, MIN_GAP_H, MAX_GAP_H, MAX_PER_DAY, RATE_WINDOW_H = 0.25, 18, 48, 2, 2.0
+RATE_MAX_H = 12.0   # sparse polls (GitHub drops cron runs): accept a base poll up to this old
+FLOOR = 10.0        # views/h: counts as a drought when the post-release peak was never observed
 REPO = os.environ.get("GITHUB_REPOSITORY", "ButHowDoItKnow/uploader-bot")
 TOKENS = Path.home() / ".config/cyrex/tokens"
 
@@ -111,12 +113,12 @@ def poll():
 
 
 def rates(since=None):
-    """[(ts, views/hour)] — each poll vs the poll ~RATE_WINDOW_H earlier (per platform; skips gaps > 2x the window)."""
+    """[(ts, views/hour)] — each poll vs the newest poll at least RATE_WINDOW_H earlier (up to RATE_MAX_H)."""
     rows = [r for r in csv.DictReader(POLLS.open())] if POLLS.exists() else []
     pts = [(dt.datetime.fromisoformat(r["ts"]), r) for r in rows]
     out = []
     for i, (t, r) in enumerate(pts):
-        base = [(t0, r0) for t0, r0 in pts[:i] if RATE_WINDOW_H <= (t - t0).total_seconds() / 3600 <= 2 * RATE_WINDOW_H]
+        base = [(t0, r0) for t0, r0 in pts[:i] if RATE_WINDOW_H <= (t - t0).total_seconds() / 3600 <= RATE_MAX_H]
         if not base:
             continue
         t0, r0 = base[-1]
@@ -147,7 +149,12 @@ def decide(st, t):
         return True, f"fallback: {gap:.0f} h since last post", info
     if gap < MIN_GAP_H:
         return False, f"min gap ({gap:.1f} < {MIN_GAP_H} h)", info
-    if cur is None or peak <= 0:
+    if cur is None:
+        return False, "not enough poll data yet", info
+    seen_peak = last and any((ts - last).total_seconds() / 3600 <= 12 for ts, _ in rs)
+    if not seen_peak and cur < FLOOR:
+        return True, f"drought (peak unobserved): {cur:.0f}/h < floor {FLOOR:.0f}/h", info
+    if peak <= 0:
         return False, "not enough poll data yet", info
     if cur < DROP * peak:
         return True, f"drought: {cur:.0f}/h < {DROP:.0%} of peak {peak:.0f}/h", info
