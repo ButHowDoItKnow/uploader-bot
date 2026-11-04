@@ -1,16 +1,17 @@
 {
- "last_post_at": "2026-11-02T14:13:45+00:00",
+ "last_post_at": "2026-11-04T00:36:38+00:00",
  "posts": [
-  "2026-11-02T14:13:45+00:00"
+  "2026-11-02T14:13:45+00:00",
+  "2026-11-04T00:36:38+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-04T00:11:01+00:00",
-  "post": false,
-  "why": "not enough poll data yet",
+  "at": "2026-11-04T00:36:38+00:00",
+  "post": true,
+  "why": "drought (peak unobserved): 4/h < floor 10/h",
   "window": true,
-  "gap_h": 34.0,
+  "gap_h": 34.4,
   "today": 0,
-  "rate": null,
-  "peak": 0
+  "rate": 4.0,
+  "peak": 4.0
  }
 }
