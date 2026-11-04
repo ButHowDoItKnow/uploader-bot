@@ -16,7 +16,7 @@ Putting a video in queue.json IS CTV's approval to post it. Pause: repo variable
 or disable the workflow. Videos live as assets on the release `queue` (not in git); the repo is public so
 Instagram can fetch them by URL (the Instagram Login API has no file upload).
 
-    python bot.py tick [--dry-run]       # what Actions runs; --dry-run polls + decides, never posts
+    python bot.py tick [--dry-run|--force]  # what Actions runs; --dry-run never posts; --force posts now (window + daily cap still apply)
     python bot.py status                 # queue + last rates
     python bot.py enqueue SLUG VIDEO.mp4 # local: upload the mp4 to the `queue` release (queue.json entry by hand)
     python bot.py push-secrets           # local: copy current YT/IG tokens into the repo's Actions secrets
@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT / "lib"))
 QUEUE, STATE, POLLS = ROOT / "queue.json", ROOT / "state/state.json", ROOT / "state/polls.csv"
 NY = ZoneInfo("America/New_York")
 WINDOWS = [((7, 0), (10, 0)), ((11, 30), (13, 30)), ((15, 0), (24, 0))]
-DROP, MIN_GAP_H, MAX_GAP_H, MAX_PER_DAY, RATE_WINDOW_H = 0.25, 18, 48, 2, 2.0
+DROP, MIN_GAP_H, MAX_GAP_H, MAX_PER_DAY, RATE_WINDOW_H = 0.25, 5, 48, 2, 2.0   # 2/day: >=5 h apart (CTV 2026-11-03)
 RATE_MAX_H = 12.0   # sparse polls (GitHub drops cron runs): accept a base poll up to this old
 FLOOR = 10.0        # views/h: counts as a drought when the post-release peak was never observed
 REPO = os.environ.get("GITHUB_REPOSITORY", "ButHowDoItKnow/uploader-bot")
@@ -264,6 +264,8 @@ def cmd_tick(a):
         post_next(q, st, t, "retry the platform that failed last time")
     elif go:
         post_next(q, st, t, why)
+    elif a.force and in_window(t) and info["today"] < MAX_PER_DAY:
+        post_next(q, st, t, "manual post (CTV asked)")
     if not a.dry_run:
         save(QUEUE, q)
         save(STATE, st)
@@ -307,7 +309,7 @@ def cmd_push_secrets(_):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     s = p.add_subparsers(dest="cmd", required=True)
-    t = s.add_parser("tick"); t.add_argument("--dry-run", action="store_true"); t.set_defaults(f=cmd_tick)
+    t = s.add_parser("tick"); t.add_argument("--dry-run", action="store_true"); t.add_argument("--force", action="store_true"); t.set_defaults(f=cmd_tick)
     s.add_parser("status").set_defaults(f=cmd_status)
     e = s.add_parser("enqueue"); e.add_argument("slug"); e.add_argument("video"); e.set_defaults(f=cmd_enqueue)
     s.add_parser("push-secrets").set_defaults(f=cmd_push_secrets)
