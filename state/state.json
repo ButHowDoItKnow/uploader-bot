@@ -4,11 +4,11 @@
   "2026-11-02T14:13:45+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-03T19:25:22+00:00",
+  "at": "2026-11-04T00:11:01+00:00",
   "post": false,
-  "why": "outside posting window",
-  "window": false,
-  "gap_h": 29.2,
+  "why": "not enough poll data yet",
+  "window": true,
+  "gap_h": 34.0,
   "today": 0,
   "rate": null,
   "peak": 0
