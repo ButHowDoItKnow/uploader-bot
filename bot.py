@@ -12,6 +12,11 @@ Runs every 30 min on GitHub Actions (tick.yml). Each tick:
      Fallback: >= MAX_GAP_H since the last post and inside a window -> post anyway (channel never goes silent).
   4. opens a GitHub issue "Posted: <title>" (GitHub notifies CTV), or one when something fails.
 
+Scheduled items (CTV 2026-11-08): an item with "publish_at" (ISO time) is never posted before that time, and the first
+tick at/after it posts it regardless of window / drought / gap (CTV picked the time). tick.yml has an extra cron at 22:00 UTC
+(17:00 EST) for on-time 5 pm posts. An item with "cover" (a jpg asset on the `queue` release) gets it as the YouTube
+thumbnail (thumbnails.set; best effort) and the Instagram Reel cover (cover_url).
+
 Putting a video in queue.json IS CTV's approval to post it. Pause: repo variable BOT_PAUSED=1 (polling continues),
 or disable the workflow. Videos live as assets on the release `queue` (not in git); the repo is public so
 Instagram can fetch them by URL (the Instagram Login API has no file upload).
@@ -166,12 +171,17 @@ def gh(*args, **kw):
     return subprocess.run(["gh", *args], check=True, text=True, capture_output=True, **kw).stdout
 
 
-def fetch(item):
-    dst = ROOT / "dl" / item["asset"]
+def fetch(item, key="asset"):
+    dst = ROOT / "dl" / item[key]
     if not dst.exists():
         dst.parent.mkdir(exist_ok=True)
-        gh("release", "download", "queue", "--repo", REPO, "-p", item["asset"], "-D", str(dst.parent), "--clobber")
+        gh("release", "download", "queue", "--repo", REPO, "-p", item[key], "-D", str(dst.parent), "--clobber")
     return dst
+
+
+def due(item, t):
+    """False while a scheduled item's publish_at is still in the future."""
+    return not item.get("publish_at") or t >= dt.datetime.fromisoformat(item["publish_at"])
 
 
 def post_youtube(item, video):
@@ -187,6 +197,12 @@ def post_youtube(item, video):
     resp = None
     while resp is None:
         _, resp = req.next_chunk()
+    if item.get("cover"):                         # custom thumbnail: best effort (needs a verified channel)
+        try:
+            yt.thumbnails().set(videoId=resp["id"], media_body=MediaFileUpload(str(fetch(item, "cover")))).execute()
+        except Exception as e:
+            print("youtube thumbnail failed:", e)
+            item["cover_warning"] = f"YouTube thumbnail not set: {e}"[:300]
     return resp["id"]
 
 
@@ -198,7 +214,8 @@ def post_instagram(item, video):
     url = f"https://github.com/{REPO}/releases/download/queue/{item['asset']}"
     c = ip.call("POST", f"{ip.API}/{uid}/media", {
         "media_type": "REELS", "video_url": url, "caption": item["ig_caption"],
-        "share_to_feed": "true", "thumb_offset": item.get("thumb_offset_ms", 0), "access_token": tok})
+        "share_to_feed": "true", "thumb_offset": item.get("thumb_offset_ms", 0), "access_token": tok,
+        **({"cover_url": f"https://github.com/{REPO}/releases/download/queue/{item['cover']}"} if item.get("cover") else {})})
     for _ in range(120):
         s = ip.call("GET", f"{ip.API}/{c['id']}", {"fields": "status_code,status", "access_token": tok})
         if s.get("status_code") in ("FINISHED", "ERROR", "EXPIRED"):
@@ -220,10 +237,13 @@ def notify(title, body):
     print(f"[notify] {title}\n{body}")
 
 
-def post_next(q, st, t, why):
-    item = next((i for i in q["items"] if i.get("status") != "posted"), None)
+def post_next(q, st, t, why, item=None):
+    item = item or next((i for i in q["items"] if i.get("status") != "posted" and due(i, t)), None)
     if not item:
-        notify("Queue is empty", f"The bot wanted to post ({why}) but the queue is empty. Add videos to queue.json.")
+        if any(i.get("status") != "posted" for i in q["items"]):
+            print(f"wanted to post ({why}) but the only queued items are scheduled for later")
+        else:
+            notify("Queue is empty", f"The bot wanted to post ({why}) but the queue is empty. Add videos to queue.json.")
         return
     video = fetch(item)
     errs = []
@@ -244,6 +264,8 @@ def post_next(q, st, t, why):
     item["status"] = "posted" if item.get("yt_id") and item.get("ig_id") else "partial"
     left = sum(1 for i in q["items"] if i.get("status") != "posted")
     links = f"YouTube: https://youtube.com/shorts/{item.get('yt_id')}\nInstagram: {item.get('ig_url')}"
+    if item.get("cover_warning"):
+        links += "\n\n" + item["cover_warning"]
     if errs:
         notify(f"Post PARTLY failed: {item['title']}", f"Reason to post: {why}\n{links}\n\nErrors (retried next tick):\n" + "\n".join(errs))
     else:
@@ -254,12 +276,15 @@ def cmd_tick(a):
     q, st, t = load(QUEUE, {"items": []}), load(STATE, {}), now()
     poll()
     partial = next((i for i in q["items"] if i.get("status") == "partial"), None)
+    sched = next((i for i in q["items"] if i.get("status") != "posted" and i.get("publish_at") and due(i, t)), None)
     go, why, info = decide(st, t)
     print("decision:", go, "|", why, "|", info)
     st["last_tick"] = {"at": t.isoformat(timespec="seconds"), "post": go, "why": why, **info}
     paused = os.environ.get("BOT_PAUSED", "") not in ("", "0")
     if a.dry_run or paused:
         print("dry-run" if a.dry_run else "paused (BOT_PAUSED)", "-> not posting")
+    elif sched:
+        post_next(q, st, t, f"scheduled for {sched['publish_at']} (CTV)", sched)
     elif partial and in_window(t):
         post_next(q, st, t, "retry the platform that failed last time")
     elif go:
@@ -279,7 +304,7 @@ def cmd_tick(a):
 def cmd_status(_):
     q, st = load(QUEUE, {"items": []}), load(STATE, {})
     for i in q["items"]:
-        print(f"{i.get('status', 'queued'):8} {i['slug']:14} {i['title']}")
+        print(f"{i.get('status', 'queued'):8} {i['slug']:14} {i['title']}" + (f"  @ {i['publish_at']}" if i.get("publish_at") else ""))
     print("last tick:", st.get("last_tick"))
     for t, v in rates()[-6:]:
         print(t.astimezone(NY).strftime("%m-%d %H:%M"), f"{v:.0f} views/h")

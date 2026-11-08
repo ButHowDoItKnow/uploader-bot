@@ -3,6 +3,7 @@ on:
   schedule:
     - cron: "5,35 12-23 * * *"   # 07:05-18:35 EST (UTC-5); in EDT everything shifts 1 h later, windows are checked in NY time
     - cron: "5,35 0-4 * * *"     # 19:05-23:35 EST
+    - cron: "0 22 * * *"         # 17:00 EST sharp, for scheduled 5 pm posts (publish_at); EDT: 18:00
   workflow_dispatch:
     inputs:
       dry_run: {description: "poll + decide only", type: boolean, default: false}
