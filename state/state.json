@@ -1,5 +1,5 @@
 {
- "last_post_at": "2026-11-10T02:59:03+00:00",
+ "last_post_at": "2026-11-11T03:49:46+00:00",
  "posts": [
   "2026-11-02T14:13:45+00:00",
   "2026-11-04T00:36:38+00:00",
@@ -12,7 +12,8 @@
   "2026-11-07T21:42:46+00:00",
   "2026-11-08T00:56:17+00:00",
   "2026-11-09T01:25:15+00:00",
-  "2026-11-10T02:59:03+00:00"
+  "2026-11-10T02:59:03+00:00",
+  "2026-11-11T03:49:46+00:00"
  ],
  "last_tick": {
   "at": "2026-11-11T01:42:29+00:00",
@@ -45,6 +46,13 @@
    "yt": "Q8NZUzuoUIw",
    "ig": "Dfi4zifAFVp",
    "note": "posted directly by Claude on CTV's go; platform-split cuts (YT=RUN branch, IG=pigeon branch), Mark"
+  },
+  {
+   "at": "2026-11-11T03:49:46+00:00",
+   "slug": "fake100_part3",
+   "yt": "B0nfvdv8KG0",
+   "ig": "DfljYeEDWRL",
+   "note": "posted directly by Claude on CTV's go; one cut both platforms, Mark 1.15x"
   }
  ]
 }
