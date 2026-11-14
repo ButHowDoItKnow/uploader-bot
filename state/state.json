@@ -16,13 +16,13 @@
   "2026-11-11T03:49:46+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-14T00:27:05+00:00",
+  "at": "2026-11-14T01:58:25+00:00",
   "post": true,
   "why": "drought: 1/h < 25% of peak 552/h",
   "window": true,
-  "gap_h": 45.5,
+  "gap_h": 47.0,
   "today": 0,
-  "rate": 0.6,
+  "rate": 0.8,
   "peak": 551.7
  },
  "manual_posts": [
