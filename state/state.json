@@ -16,14 +16,14 @@
   "2026-11-11T03:49:46+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-17T20:46:01+00:00",
+  "at": "2026-11-18T02:50:15+00:00",
   "post": false,
-  "why": "not enough poll data yet",
+  "why": "still active: 108/h vs peak 108/h",
   "window": true,
-  "gap_h": 6.9,
+  "gap_h": 13.0,
   "today": 0,
-  "rate": null,
-  "peak": 0
+  "rate": 107.7,
+  "peak": 107.7
  },
  "manual_posts": [
   {
