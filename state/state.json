@@ -16,13 +16,13 @@
   "2026-11-11T03:49:46+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-18T02:50:15+00:00",
+  "at": "2026-11-18T03:18:51+00:00",
   "post": false,
-  "why": "still active: 108/h vs peak 108/h",
+  "why": "still active: 101/h vs peak 108/h",
   "window": true,
-  "gap_h": 13.0,
+  "gap_h": 13.4,
   "today": 0,
-  "rate": 107.7,
+  "rate": 100.8,
   "peak": 107.7
  },
  "manual_posts": [
