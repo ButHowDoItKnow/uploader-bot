@@ -16,13 +16,13 @@
   "2026-11-11T03:49:46+00:00"
  ],
  "last_tick": {
-  "at": "2026-11-21T06:12:26+00:00",
+  "at": "2026-11-21T19:04:19+00:00",
   "post": false,
   "why": "outside posting window",
   "window": false,
-  "gap_h": 54.6,
+  "gap_h": 67.5,
   "today": 0,
-  "rate": 1.2,
+  "rate": null,
   "peak": 324.9
  },
  "manual_posts": [
