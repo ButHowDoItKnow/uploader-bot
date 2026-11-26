@@ -144,6 +144,26 @@
    "ig_id": "18167357266778303",
    "ig_url": "https://www.instagram.com/reel/DfgJcNYAvsY/",
    "posted_at": "2026-11-09T01:25:15+00:00"
+  },
+  {
+   "slug": "syn_ch2",
+   "asset": "syn_ch2.mp4",
+   "cover": "syn_ch2_cover.jpg",
+   "publish_at": "2026-11-26T09:00:00-05:00",
+   "title": "To Her, 5 Plus 2 Is Yellow. How Do Scientists Know?",
+   "yt_description": "WHAT COLOUR IS 5 + 2 FOR YOU?",
+   "ig_caption": "WHAT COLOUR IS 5 + 2 FOR YOU?",
+   "tags": [
+    "synesthesia",
+    "grapheme color synesthesia",
+    "psychology",
+    "brain",
+    "perception",
+    "how it works",
+    "animation",
+    "science"
+   ],
+   "thumb_offset_ms": 0
   }
  ]
 }
